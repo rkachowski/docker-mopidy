@@ -25,7 +25,7 @@ RUN set -ex \
         Mopidy-Iris \
         Mopidy-Moped \
         Mopidy-GMusic \
-        Mopidy-Pandora \
+        Mopidy-TuneIn \
         Mopidy-YouTube \
         pyopenssl \
         youtube-dl \
@@ -33,6 +33,21 @@ RUN set -ex \
  && ln -s /config /var/lib/mopidy/.config/mopidy \
     # Clean-up
  && apt-get purge --auto-remove -y \
+        curl \
+        gcc \
+ && apt-get clean \
+ && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* ~/.cache
+
+RUN apt-get update && apt-get install -y git
+
+#mqtt
+RUN cd /tmp \
+  && git clone https://github.com/magcode/mopidy-mqtt.git \
+  && cd mopidy-mqtt \
+  && python setup.py install
+
+# separate clean up
+RUN apt-get purge --auto-remove -y \
         curl \
         gcc \
  && apt-get clean \
